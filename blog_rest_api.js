@@ -12,7 +12,7 @@ const morgan = require('morgan');
 const feedRoutes = require('./routes/feed');
 const authRoutes = require('./routes/auth');
 
-const app = express();
+const blog_rest_api = express();
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -38,18 +38,18 @@ const fileFilter = (req, file, cb) => {
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'),
     {flags: 'a'});
 
-app.use(helmet());
-app.use(compression());
-app.use(morgan('combined', {stream: accessLogStream}));
+blog_rest_api.use(helmet());
+blog_rest_api.use(compression());
+blog_rest_api.use(morgan('combined', {stream: accessLogStream}));
 
-// app.use(bodyParser.urlencoded()); // x-www-form-urlencoded <form>
-app.use(bodyParser.json()); // application/json
-app.use(
+// blog_rest_api.use(bodyParser.urlencoded()); // x-www-form-urlencoded <form>
+blog_rest_api.use(bodyParser.json()); // application/json
+blog_rest_api.use(
   multer({ storage: fileStorage, fileFilter: fileFilter }).single('image')
 );
-app.use('/images', express.static(path.join(__dirname, 'images')));
+blog_rest_api.use('/images', express.static(path.join(__dirname, 'images')));
 
-app.use((req, res, next) => {
+blog_rest_api.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
     'Access-Control-Allow-Methods',
@@ -59,10 +59,10 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/feed', feedRoutes);
-app.use('/auth', authRoutes);
+blog_rest_api.use('/feed', feedRoutes);
+blog_rest_api.use('/auth', authRoutes);
 
-app.use((error, req, res, next) => {
+blog_rest_api.use((error, req, res, next) => {
   console.log(error);
   const status = error.statusCode || 500;
   const message = error.message;
@@ -73,7 +73,7 @@ app.use((error, req, res, next) => {
 mongoose
   .connect(process.env.MONGO_CONNECTION_STRING)
   .then(result => {
-    const server = app.listen(process.env.PORT || 8080);
+    const server = blog_rest_api.listen(process.env.PORT || 8080);
     const io = require('./socket').init(server);
     io.on('connection', socket => {
       console.log('Client connected');

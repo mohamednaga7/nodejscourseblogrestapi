@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const path = require('path');
 const fs = require('fs');
 
@@ -73,7 +75,7 @@ blog_rest_api.use((error, req, res, next) => {
 mongoose
   .connect(process.env.MONGO_CONNECTION_STRING)
   .then(result => {
-    const server = blog_rest_api.listen(process.env.PORT || 8080);
+    const server = blog_rest_api.listen(process.env.PORT || 3003);
     const io = require('./socket').init(server);
     io.on('connection', socket => {
       console.log('Client connected');

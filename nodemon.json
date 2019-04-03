@@ -1,0 +1,5 @@
+{
+  "env": {
+    "MONGO_CONNECTION_STRING": "mongodb+srv://mohamednaga7:Kv7FwUzcN9ufkbJk@shopping-nodejs-website-jdcf6.mongodb.net/blog?retryWrites=true"
+  }
+}
